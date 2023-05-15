@@ -2,9 +2,15 @@
 
 
 ## Microservices architecture 
-
 We chose to use a microservice architecture for our project over a monolithic architecture because it has several advantages. For one, microservices are flexible and can be easily scaled up or down based on the specific needs of each service. This means we can handle sudden surges in traffic or resource demands more efficiently. 
-Another big benefit of microservices is their reliability. If one service fails, the rest of the system can continue to function normally whilst we restore the failed microservice.  Lastly, microservices promote modularity and flexibility, making it easier to update and maintain individual services without disrupting the whole system. This is particularly useful due to the fact that our project is expected to be handed over to different development teams.
+
+Another big benefit of microservices is their reliability. If one service fails, the rest of the system can continue to function normally whilst we restore the failed microservice. 
+
+Lastly, microservices promote modularity and flexibility, making it easier to update and maintain individual services without disrupting the whole system. This is particularly useful due to the fact that our project is expected to be handed over to different development teams. 
+
+
+![Afbeelding1](https://github.com/S-A-RB05/.github/assets/73555911/1a089467-3ce0-4515-84f6-51f7296af883)
+
 
 ## Angular 
 
