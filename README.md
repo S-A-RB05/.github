@@ -1,1 +1,1 @@
-# .github
+# Non code repo
