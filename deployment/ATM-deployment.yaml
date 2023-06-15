@@ -100,5 +100,5 @@ spec:
     app: platform
   ports:
     - port: 80
-    - targetPort: 4200
+      targetPort: 4200
   type: LoadBalancer
