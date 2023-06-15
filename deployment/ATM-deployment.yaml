@@ -1,0 +1,104 @@
+# Strat service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: strat-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: strat-service
+  template:
+    metadata:
+      labels:
+        app: strat-service
+    spec:
+      containers:
+      - name: strat-service
+        image: stockbrood/strat_service:latest
+        ports:
+          - containerPort: 10000
+
+---
+
+# Test manager
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-manager
+  template:
+    metadata:
+      labels:
+        app: test-manager
+    spec:
+      containers:
+      - name: test-manager
+        image: stockbrood/test_manager:latest
+        ports:
+          - containerPort: 9999
+
+---
+
+# Result service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: result-service
+  template:
+    metadata:
+      labels:
+        app: result-service
+    spec:
+      containers:
+      - name: api-gateway
+        image: stockbrood/result_service:latest
+        ports:
+          - containerPort: 9992
+
+---
+
+# Platform
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: platform
+  template:
+    metadata:
+      labels:
+        app: platform
+    spec:
+      containers:
+      - name: platform
+        image: stockbrood/platform:latest
+        ports:
+          - containerPort: 4200
+
+---
+
+# Loadbalancer
+apiVersion: v1
+kind: Service
+metadata:
+  name: atm
+spec:
+  selector:
+    app: platform
+  ports:
+    - port: 80
+    - targetPort: 4200
+  type: Loadbalancer
