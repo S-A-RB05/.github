@@ -101,4 +101,4 @@ spec:
   ports:
     - port: 80
     - targetPort: 4200
-  type: Loadbalancer
+  type: LoadBalancer
