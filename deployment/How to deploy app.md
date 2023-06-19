@@ -13,7 +13,7 @@ In this document we will explain the steps necessary to run the whole ATM applic
 1. Start a minikube cluster by using the command ```minikube start``` in a terminal 
 2. Create a separate namespace for development purposes by using the command ```kubectl create namespace development``` 
 3. Use ```kubectl apply -f https://raw.githubusercontent.com/S-A-RB05/.github/main/deployment/ATM-deployment.yaml``` to roll out the necessary yaml files for minikube to run the application 
-4. Run the “minikube tunnel” command to expose the services to your local machine 
+4. Run the ```minikube tunnel``` command to expose the services to your local machine 
 5. Wait a minute or until deployed 
 6. Go to http://localhost and you just deployed the ATM application 
 
