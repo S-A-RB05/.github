@@ -1,8 +1,13 @@
+# --------------
+# Deployments
+# --------------
+
 # Strat service
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: strat-service
+  namespace: development
 spec:
   replicas: 1
   selector:
@@ -26,6 +31,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-manager
+  namespace: development
 spec:
   replicas: 1
   selector:
@@ -40,7 +46,8 @@ spec:
       - name: test-manager
         image: stockbrood/test_manager:latest
         ports:
-          - containerPort: 9999
+          - containerPort: 8081
+      serviceAccountName: test-manager-service-account
 
 ---
 
@@ -49,6 +56,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: result-service
+  namespace: development
 spec:
   replicas: 1
   selector:
@@ -72,6 +80,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: platform
+  namespace: development
 spec:
   replicas: 1
   selector:
@@ -86,19 +95,117 @@ spec:
       - name: platform
         image: stockbrood/platform:latest
         ports:
-          - containerPort: 4200
+          - containerPort: 80
 
 ---
 
-# Loadbalancer
+# --------------
+# Services
+# --------------
+
+# Expose the platform for local access through "localhost"
 apiVersion: v1
 kind: Service
 metadata:
   name: platform
+  namespace: development
 spec:
   selector:
     app: platform
   ports:
     - port: 80
-      targetPort: 4200
+      targetPort: 80
   type: LoadBalancer
+
+---
+
+# Expose services for internal access inside cluster using DNS
+# Strat service
+apiVersion: v1
+kind: Service
+metadata:
+  name: strat-service
+  namespace: development
+spec:
+  selector:
+    app: strat-service
+  ports:
+    - port: 10000
+      targetPort: 10000
+  type: LoadBalancer
+
+---
+
+# Test manager
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-manager
+  namespace: development
+spec:
+  selector:
+    app: test-manager
+  ports:
+    - port: 8081
+      targetPort: 8081
+  type: LoadBalancer
+
+
+---
+
+# Result service
+apiVersion: v1
+kind: Service
+metadata:
+  name: result-service
+  namespace: development
+spec:
+  selector:
+    app: result-service
+  ports:
+    - port: 9992
+      targetPort: 9992
+  type: LoadBalancer
+
+
+---
+# --------------
+# Roles
+# --------------
+
+# Assign and create roles for test-manager pod to be able to create jobs
+
+# RBAC resources
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: test-manager-service-account
+  namespace: development
+
+---
+
+# ClusterRole to create jobs
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: job-creator
+rules:
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["create"]
+
+---
+
+# ClusterRoleBinding to bind the ClusterRole to the service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: job-creator-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: job-creator
+subjects:
+- kind: ServiceAccount
+  name: test-manager-service-account
+  namespace: development
